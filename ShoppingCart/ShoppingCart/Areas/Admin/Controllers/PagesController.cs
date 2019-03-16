@@ -56,7 +56,7 @@ namespace ShoppingCart.Areas.Admin.Controllers
                 }
                 else
                 {
-                    slug = model.Slug.Replace("", "-").ToLower();
+                    slug = model.Slug.Replace(" ", "-").ToLower();
 
                 }
                 // make sure title ans slug are unique
@@ -79,6 +79,28 @@ namespace ShoppingCart.Areas.Admin.Controllers
             // redirect
             return RedirectToAction("AddPage");
             }
-          
+        // GET: Admin/Pages/EditPage/i
+        public ActionResult EditPage(int id)
+        {
+            //Declare pagevm
+            PageVM model;
+            using (Db db = new Db())
+            {
+                // get page
+                PageDTO dto = db.Pages.Find(id);
+            
+            // confirm page exist
+            if (dto == null)
+            {
+                return Content("the oage doesn't exist.");
+            }
+            // init page vm
+            model = new PageVM(dto);
         }
+
+            //return view model
+            return View(model);
+        }
+
     }
+}
