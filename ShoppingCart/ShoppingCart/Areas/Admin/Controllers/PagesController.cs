@@ -137,11 +137,13 @@ namespace ShoppingCart.Areas.Admin.Controllers
                     
                 }
                 // make sure slug and title are unique
-                if (db.Pages.Where(x => x.Id != id).Any(x => x.Title == model.Title) || db.Pages.Where(x => x.Id != id).Any(x => x.Slug == slug))
+                if (db.Pages.Where(x => x.Id != id).Any(x => x.Title == model.Title) || 
+                    db.Pages.Where(x => x.Id != id).Any(x => x.Slug == slug))
                 {
                     ModelState.AddModelError("", "That title or slug already exist.");
                     return View(model);
                 }
+
                 // DTO the rest
                 dto.Slug = slug;
                 dto.Body = model.Body;
@@ -156,6 +158,31 @@ namespace ShoppingCart.Areas.Admin.Controllers
             // redirect
             return RedirectToAction("EditPage");
 
+        }
+        [HttpGet]
+        // GET: Admin/Pages/PageDetails/i
+        public ActionResult PageDetails(int id)
+        {
+            // declare pagevm
+            PageVM model;
+
+            using (Db db = new Db())
+            {
+
+
+                // get the page
+                PageDTO dto = db.Pages.Find(id);
+                // confirm the page
+                if (dto == null)
+                {
+                    return Content("The page does not exist.");
+                }
+                // init pagevm
+                model = new PageVM(dto);
+               
+            }
+            // return view with model
+            return View(model);
         }
     }
 }
