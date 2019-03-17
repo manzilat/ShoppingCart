@@ -36,7 +36,7 @@ namespace ShoppingCart.Areas.Admin.Controllers
         public ActionResult AddPage(PageVM model)
         {
             // check model state
-            if(! ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(model);
             }
@@ -70,15 +70,15 @@ namespace ShoppingCart.Areas.Admin.Controllers
                 dto.Body = model.Body;
                 dto.HasSidebar = model.HasSidebar;
                 dto.Sorting = 100;
-                    // save STO
-                    db.Pages.Add(dto);
+                // save STO
+                db.Pages.Add(dto);
                 db.SaveChanges();
             }
             // set tempData message
             TempData["SM"] = "You have added a new page!";
             // redirect
             return RedirectToAction("AddPage");
-            }
+        }
         [HttpGet]
         // GET: Admin/Pages/EditPage/i
         public ActionResult EditPage(int id)
@@ -89,15 +89,15 @@ namespace ShoppingCart.Areas.Admin.Controllers
             {
                 // get page
                 PageDTO dto = db.Pages.Find(id);
-            
-            // confirm page exist
-            if (dto == null)
-            {
-                return Content("the oage doesn't exist.");
+
+                // confirm page exist
+                if (dto == null)
+                {
+                    return Content("the oage doesn't exist.");
+                }
+                // init page vm
+                model = new PageVM(dto);
             }
-            // init page vm
-            model = new PageVM(dto);
-        }
 
             //return view model
             return View(model);
@@ -107,7 +107,7 @@ namespace ShoppingCart.Areas.Admin.Controllers
         public ActionResult EditPage(PageVM model)
         {
             // check model state
-        if( ! ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(model);
             }
@@ -122,22 +122,22 @@ namespace ShoppingCart.Areas.Admin.Controllers
                 PageDTO dto = db.Pages.Find(id);
                 //DTO title
                 dto.Title = model.Title;
-                
+
                 // check for slug ans set it if needed
                 if (model.Slug != "home")
-                    {
-                    if(string.IsNullOrWhiteSpace(model.Slug))
+                {
+                    if (string.IsNullOrWhiteSpace(model.Slug))
                     {
                         slug = model.Title.Replace(" ", "-").ToLower();
                     }
-                    else 
+                    else
                     {
                         slug = model.Slug.Replace(" ", "-").ToLower();
                     }
-                    
+
                 }
                 // make sure slug and title are unique
-                if (db.Pages.Where(x => x.Id != id).Any(x => x.Title == model.Title) || 
+                if (db.Pages.Where(x => x.Id != id).Any(x => x.Title == model.Title) ||
                     db.Pages.Where(x => x.Id != id).Any(x => x.Slug == slug))
                 {
                     ModelState.AddModelError("", "That title or slug already exist.");
@@ -179,7 +179,7 @@ namespace ShoppingCart.Areas.Admin.Controllers
                 }
                 // init pagevm
                 model = new PageVM(dto);
-               
+
             }
             // return view with model
             return View(model);
@@ -221,6 +221,48 @@ namespace ShoppingCart.Areas.Admin.Controllers
                     count++;
                 }
             }
+        }
+        [HttpGet]
+        // GET: Admin/Pages/EditSidebar/i
+        public ActionResult EditSidebar()
+        {
+
+            //Declare model
+
+            SidebarVM model;
+
+            using (Db db = new Db())
+            {
+                // get DTO
+
+                SidebarDTO dto = db.Sidebar.Find(1);
+
+                // init model
+                model = new SidebarVM(dto);
+            }
+
+            //return view model
+            return View(model);
+        }
+        [HttpPost]
+        // POST: Admin/Pages/EditSidebar/i
+        public ActionResult EditSidebar(SidebarVM model )
+        {
+            using (Db db = new Db())
+            {
+                // get DTO
+                SidebarDTO dto = db.Sidebar.Find(1);
+
+                // DTO the body
+
+                dto.Body = model.Body;
+                // save
+                db.SaveChanges();
+            }
+            // set temp data message
+            TempData["SM"] = "you have edited the sidebar";
+            // redirect
+                return RedirectToAction("EditSidebar");
         }
     }
 }
