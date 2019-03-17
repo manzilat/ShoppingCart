@@ -200,5 +200,27 @@ namespace ShoppingCart.Areas.Admin.Controllers
             // redirect
             return RedirectToAction("Index");
         }
+        // POST: Admin/Pages/ReorderPages/i
+        [HttpPost]
+        public void ReorderPages(int[] id)
+        {
+            using (Db db = new Db())
+            {
+                // set initial count
+                int count = 1;
+
+                // declare  pageDTO
+                PageDTO dto;
+
+                // sorting for each page
+                foreach (var pageId in id)
+                {
+                    dto = db.Pages.Find(pageId);
+                    dto.Sorting = count;
+                    db.SaveChanges();
+                    count++;
+                }
+            }
+        }
     }
 }
