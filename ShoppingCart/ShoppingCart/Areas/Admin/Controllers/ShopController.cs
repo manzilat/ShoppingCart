@@ -61,5 +61,44 @@ namespace ShoppingCart.Areas.Admin.Controllers
             //return id
             return id;
         }
+        // POST: Admin/Shop/ReorderCategories
+        [HttpPost]
+        public void ReorderCategories(int[] id)
+        {
+            using (Db db = new Db())
+            {
+                // set initial count
+                int count = 1;
+
+                // declare  categoryDTO
+              CategoryDTO dto;
+
+                // sorting for each category
+                foreach (var catId in id)
+                {
+                    dto = db.Categories.Find(catId);
+                    dto.Sorting = count;
+                    db.SaveChanges();
+                    count++;
+                }
+            }
+        }
+
+        // GET: Admin/Shop/DeleteCategory/id
+        public ActionResult DeleteCategory(int id)
+        {
+            using (Db db = new Db())
+            {
+                // get the category
+                CategoryDTO dto = db.Categories.Find(id);
+                // remove categories
+                db.Categories.Remove(dto);
+
+                //save
+                db.SaveChanges();
+            }
+            // redirect
+            return RedirectToAction("Categories");
+        }
     }
 }
