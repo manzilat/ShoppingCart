@@ -38,7 +38,7 @@ else
         {
             <tr id="id_@item.Id">
                 <td>
-
+<div class="ajaxdivtd"></div>
                     @Html.EditorFor(modelItem => item.Name, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 </td>
 
@@ -122,7 +122,7 @@ else
 
             ///////////////////////////////////////////////////////////////////
             /*
-* confirm category deletion
+* reorder categories
 */
             $("table#pages tbody").sortable({
                 items: "tr:not(.home)",
@@ -144,14 +144,47 @@ else
 
 
             /*
-             * reorder categories
-            */
+             * rename  category             */
 
            
-                $("body").on("click", "a.delete", function () {
-                if (!confirm("confirm page deletion")) return false;
+            var originalTextBoxValue; $("table#pages input.text-box").dblclick(function () {
+                originalTextBoxValue = $(this).val();
+                $(this).attr("readonly", false);
             });
+            $("table#pages input.text-box").keyup(function () {
+                if (e.keycode == 13) {
+                    $(this).blur();
+                }
+            });
+            ("table#pages input.text-box").blur(function{
+                var $this = $(this);
+                var ajaxdiv = $this.parent().find(".ajaxdivtd");
+                var newCatName = $this.val();
+                var id = $this.parent().parent().attr("id").substring(3);
+                varurl = "/admin/shop/RenameCategory";
+                if (newCatName.length < 2) {
+                    alert("Category name must be at least 2 categories long.");
+                    $this.attr("readonly", true);
+                    return false;
+                }
+                $.post(url, { newCatName: newCatName, id: id }, function (data) {
+                    var response = data.trim();
+                    if (response == "titletake") {
+                        $this.val(originalTextBoxValue);
+                        ajaxText.html("<span class = 'alert alert-danger'> this title is taken!</span>").show();
 
+                    }
+                    else {
+                        ajaxText.html("<span class = 'alert alert-success'> the category name has been changed!</span>").show();
+                    }
+
+                    setTimeout(function () {
+                        ajaxdiv.fadeOut("fast", function () {
+                            ajaxdiv.html("");
+                        });
+                    }, 2000);
+                });
+            });
             ///////////////////////////////////////////////////////////////////
 
 

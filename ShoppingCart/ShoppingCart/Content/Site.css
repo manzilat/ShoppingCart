@@ -16,5 +16,8 @@ span.ajax-text {
 }
 
 table.sorting.categories td {
-    padding: 30px;
+    padding: 10px;
+}
+.ajaxdivtd{
+    position:absolute;
 }
